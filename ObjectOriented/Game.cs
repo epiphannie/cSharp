@@ -11,7 +11,7 @@ namespace TreehouseDefense
             try
             {
                 Path path = new Path(
-                    new [] {
+                    new[] {
                         new MapLocation(0, 2, map),
                         new MapLocation(1, 2, map),
                         new MapLocation(2, 2, map),
@@ -23,21 +23,40 @@ namespace TreehouseDefense
                     }
                 );
 
-                MapLocation location = path.GetLocationAt(8);
+                Invader[] invaders =
+                {
+                    new Invader(path),
+                    new Invader(path),
+                    new Invader(path),
+                    new Invader(path)
+                };
 
-                if (location !=null)
-                { 
-                    Console.WriteLine(location.X + ", " + location.Y);
-                }
-            catch(OutOfBoundsException ex)
+                Tower[] towers =
+                {
+                    new Tower(new MapLocation(1, 3, map)),
+                    new Tower(new MapLocation(3, 3, map)),
+                    new Tower(new MapLocation(5, 3, map)),
+                };
+
+                Level level = new Level(invaders)
+                {
+                    Towers = towers
+                };
+
+
+            bool playerWon = level.Play();
+            Console.WriteLine("Player " + (playerWon ? "won." : "lost."));
+
+            }
+            catch (OutOfBoundsException ex)
             {
                 Console.WriteLine(ex.Message);
             }
-            catch(TreehouseDefenseException)
+            catch (TreehouseDefenseException)
             {
                 Console.WriteLine("Unhandled TreehouseDefense Exception");
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Unhandled Exception: " + ex);
             }
