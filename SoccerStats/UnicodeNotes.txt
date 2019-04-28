@@ -1,0 +1,3 @@
+﻿byte[] unicodeBytes = UnicodeEncoding.Unicode.GetBytes(new char[] {lowerH});
+
+string unicodeString = UnicodeEncoding.Unicode.GetString(unicodeBytes);
