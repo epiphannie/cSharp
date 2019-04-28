@@ -7,8 +7,6 @@ namespace TreehouseDefense
         protected virtual int Power { get; } = 1;
         protected virtual double Accuracy { get; } = 0.75;
 
-        private static readonly System.Random _random = new System.Random();
-
         private readonly MapLocation _location;
 
         public Tower (MapLocation location)
@@ -18,24 +16,13 @@ namespace TreehouseDefense
 
         public bool IsSuccessfulShot()
         {
-            return _random.NextDouble() < Accuracy;
+            return Random.NextDouble() < Accuracy;
         }
 
-        public void FireOnInvaders(Invader[] invaders)
+        public void FireOnInvaders(IInvader[] invaders)
         {
-            //int index = 0;
-            //while(index < invaders.Length)
-            //{
-            //    Invader invader = invaders[index];
-            //    index++;
-            //}
 
-            //for(int i= 0; i < invaders.Length; i++)
-            //{
-
-            //}
-
-            foreach(Invader invader in invaders)
+            foreach(IInvader invader in invaders)
             {
                 if(invader.IsActive && _location.InRangeOf(invader.Location, Range))
                 {

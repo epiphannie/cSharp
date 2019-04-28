@@ -1,7 +1,7 @@
 ﻿using System;
 namespace TreehouseDefense
 {
-    public class Invader
+    abstract public class Invader : IInvader
     {
         private readonly Path _path;
         private int _pathStep = 0;
@@ -11,7 +11,7 @@ namespace TreehouseDefense
         public MapLocation Location => _path.GetLocationAt(_pathStep);
         //computed property, properites always return a value
 
-        public virtual int Health { get; protected set; } = 2;
+        public abstract int Health { get; protected set; }
 
         public bool HasScored { get { return _pathStep >= _path.Length; } }
 
