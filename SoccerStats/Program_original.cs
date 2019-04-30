@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +18,19 @@ namespace SoccerStats
             DirectoryInfo directory = new DirectoryInfo(currentDirectory);
             var fileName = Path.Combine(directory.FullName, "SoccerGameResults.csv");
             var fileContents = ReadSoccerResults(fileName);
+
+            fileName = Path.Combine(directory.FullName, "players.json");
+            var players = DeserializePlayers(fileName);
+
+            var topTenPlayers = GetTopTenPlayers(players);
+
+            foreach(var player in topTenPlayers)
+            {
+                Console.WriteLine("Name: "+ player.FirstName+ " PPG: "+ player.PointsPerGame);
+            }
+            fileName = Path.Combine(directory.FullName, "topten.json");
+            SerializePlayersToFile(topTenPlayers, fileName);
+            Console.WriteLine(GetGoogleHomePage());
             //string[] fileLines = fileContents.Split(new char[] { '\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
             //foreach (var line in fileLines)
             //{
@@ -93,6 +108,58 @@ namespace SoccerStats
             }
             return soccerResults;
 
+        }
+
+        public static List<Player> DeserializePlayers(string fileName)
+        {
+            var players = new List<Player>();
+            var serializer = new JsonSerializer();
+            using (var reader = new StreamReader(fileName))
+            using (var jsonReader = new JsonTextReader(reader))
+            {
+                players = serializer.Deserialize<List<Player>>(jsonReader);
+                }
+
+            return players;
+        }
+
+        public static List<Player> GetTopTenPlayers(List<Player> players)
+        {
+            var topTenPlayers = new List<Player>();
+            players.Sort(new PlayerComparer());
+            int counter = 0;
+            foreach(var player in players)
+            {
+                topTenPlayers.Add(player);
+                counter += 1;
+                if (counter == 10)
+                    {
+                    break;
+                    }
+            }
+            return topTenPlayers;
+        }
+
+        public static void SerializePlayersToFile(List<Player> players, string fileName)
+        {
+            var serializer = new JsonSerializer();
+            using (var writer = new StreamWriter(fileName))
+            using (var jsonWriter = new JsonTextWriter(writer))
+            {
+                serializer.Serialize(jsonWriter, players);
+            }
+        }
+
+        public static string GetGoogleHomePage()
+        {
+            var webClient = new WebClient();
+            byte[] googleHome = webClient.DownloadData("https://www.google.com");
+
+            using (var stream = new MemoryStream(googleHome))
+                using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }
